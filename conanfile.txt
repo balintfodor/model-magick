@@ -1,0 +1,14 @@
+[requires]
+catch2/2.13.7
+onetbb/2021.3.0
+libigl/2.3.0
+assimp/5.1.0
+eigen/3.4.0
+
+[generators]
+cmake
+
+[imports]
+bin, *.dll -> ./bin
+lib, *.dylib* -> ./bin
+lib, *.so* -> ./bin
