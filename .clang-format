@@ -1,0 +1,19 @@
+---
+  BasedOnStyle: 'Google'
+  AccessModifierOffset: -4
+  AlignTrailingComments: false
+  AllowAllParametersOfDeclarationOnNextLine: false
+  AlwaysBreakTemplateDeclarations: 'Yes'
+  BreakBeforeBraces: 'Linux'
+  ColumnLimit: 100
+  ConstructorInitializerAllOnOneLineOrOnePerLine: true
+  IncludeBlocks: 'Regroup'
+  IndentPPDirectives: 'AfterHash'
+  IndentWidth: '4'
+  NamespaceIndentation: 'All'
+  BreakBeforeBinaryOperators: 'All'
+  BreakBeforeTernaryOperators: true
+  AlignAfterOpenBracket: 'AlwaysBreak'
+  BinPackParameters: false
+  NamespaceIndentation: 'Inner'
+...

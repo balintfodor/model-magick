@@ -1,0 +1,36 @@
+name: MacOS
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: 1
+
+jobs:
+  build:
+    runs-on: macos-10.15
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: turtlebrowser/get-conan@v1.0
+
+      - name: install conan dependencies
+        run: conan install -if build .
+
+      - name: configure
+        run: cmake . -Bbuild -DCMAKE_BUILD_TYPE=Debug
+
+      - name: build
+        run: cmake --build build -j4
+
+      - name: test
+        run: |
+          cd build
+          ctest --build-config Debug

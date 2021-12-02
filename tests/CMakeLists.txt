@@ -1,0 +1,31 @@
+cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
+
+set(TEST_TARGET_NAME "test-model-magick")
+
+add_executable(${TEST_TARGET_NAME}
+    test_main.cpp
+    test_importer.cpp
+)
+
+set_target_properties(${TEST_TARGET_NAME}
+    PROPERTIES CXX_STANDARD 17
+)
+
+target_compile_options(${TEST_TARGET_NAME}
+    PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->"
+)
+
+target_link_libraries(${TEST_TARGET_NAME}
+    PRIVATE
+        CONAN_PKG::catch2
+        model-magick
+)
+
+add_test(
+    NAME
+        ${TEST_TARGET_NAME}
+    COMMAND
+        ${TEST_TARGET_NAME}
+    WORKING_DIRECTORY
+        $<TARGET_FILE_DIR:${TEST_TARGET_NAME}>
+)
