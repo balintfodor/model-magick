@@ -5,9 +5,6 @@ project(model-magick
     LANGUAGES CXX
 )
 
-# add_compile_options(-fcolor-diagnostics)
-# add_compile_options(-Wall -Wextra -Wpedantic -Werror)
-
 enable_testing()
 
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
@@ -19,10 +16,6 @@ endif()
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS KEEP_RPATHS)
-
-if(MSVC)
-    add_definitions(-DNOMINMAX)
-endif()
 
 add_subdirectory(src/model-magick)
 add_subdirectory(apps)
