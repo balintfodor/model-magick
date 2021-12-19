@@ -10,11 +10,14 @@
 namespace ModelMagick
 {
 
-Mesh importModel(const std::filesystem::path& filePath);
+class ImporterError : public std::runtime_error {
+public:
+    ImporterError() : std::runtime_error("") {}
+};
 
-oneapi::tbb::flow::function_node<std::filesystem::path, Mesh> createModelImporter(
-    oneapi::tbb::flow::graph& graph,
-    std::size_t concurrency = oneapi::tbb::flow::unlimited);
+class OpenError : public ImporterError {};
+
+Mesh importModel(const std::filesystem::path& filePath);
 
 oneapi::tbb::flow::input_node<Mesh> createModelImporter(
     const std::filesystem::path& filePath,
