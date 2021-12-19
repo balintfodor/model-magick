@@ -7,7 +7,7 @@
   BreakBeforeBraces: 'Linux'
   ColumnLimit: 100
   ConstructorInitializerAllOnOneLineOrOnePerLine: true
-  IncludeBlocks: 'Regroup'
+  IncludeBlocks: 'Preserve'
   IndentPPDirectives: 'AfterHash'
   IndentWidth: '4'
   NamespaceIndentation: 'All'
