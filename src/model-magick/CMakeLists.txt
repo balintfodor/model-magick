@@ -12,9 +12,26 @@ set_target_properties(${LIB_TARGET_NAME}
     PROPERTIES CXX_STANDARD 17
 )
 
-target_compile_options(${LIB_TARGET_NAME}
-    PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->"
-)
+if(MSVC)
+    target_compile_definitions(${LIB_TARGET_NAME}
+        PRIVATE
+            # assimp can cause compilation error if this is not set
+            -DNOMINMAX
+    )
+    target_compile_options(${LIB_TARGET_NAME}
+        PRIVATE
+            /W4
+            /permissive-
+    )
+else()
+    target_compile_options(${LIB_TARGET_NAME}
+        PRIVATE
+            -Wall
+            -Wextra
+            -Werror
+            -Wpedantic
+        )
+endif()
 
 target_link_libraries(${LIB_TARGET_NAME}
     PUBLIC
