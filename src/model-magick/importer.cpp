@@ -1,10 +1,8 @@
 #include "model-magick/importer.h"
 
-#include <iostream>
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <assimp/Importer.hpp>
 
 namespace ModelMagick
 {
@@ -19,12 +17,11 @@ Mesh importModel(const path& filePath)
     Assimp::Importer importer;
 
     const aiScene* scene = importer.ReadFile(
-        filePath.string(),
-        aiProcess_Triangulate | aiProcess_RemoveComponent | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
+        filePath.string(), aiProcess_Triangulate | aiProcess_RemoveComponent
+                               | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
 
     if (!scene) {
-        // TODO: report
-        return Mesh();
+        throw OpenError();
     }
 
     // TODO: handle scene->mNumMeshes != 1
@@ -51,13 +48,6 @@ Mesh importModel(const path& filePath)
     // importer dtor will cleanup scene
 
     return newMesh;
-}
-
-function_node<path, Mesh> createModelImporter(
-    oneapi::tbb::flow::graph& graph,
-    std::size_t concurrency)
-{
-    return function_node<path, Mesh>(graph, concurrency, importModel);
 }
 
 input_node<Mesh> createModelImporter(

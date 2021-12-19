@@ -41,3 +41,10 @@ add_test(
     WORKING_DIRECTORY
         $<TARGET_FILE_DIR:${TEST_TARGET_NAME}>
 )
+
+add_custom_target(copy-test-assets
+    COMMAND
+        ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/assets $<TARGET_FILE_DIR:${TEST_TARGET_NAME}>/assets
+)
+
+add_dependencies(${TEST_TARGET_NAME} copy-test-assets)
