@@ -5,9 +5,9 @@ set(LIB_TARGET_NAME model-magick)
 add_library(${LIB_TARGET_NAME}
     include/model-magick/mesh.h
     include/model-magick/importer.h
-    include/model-magick/MeshStatCalculator.h
+    include/model-magick/MeshStatsCalculator.h
     importer.cpp
-    MeshStatCalculator.cpp
+    MeshStatsCalculator.cpp
 )
 
 set_target_properties(${LIB_TARGET_NAME}
