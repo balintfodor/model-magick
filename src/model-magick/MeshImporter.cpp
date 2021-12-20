@@ -50,27 +50,11 @@ Mesh importMesh(const path& filePath)
     return newMesh;
 }
 
-input_node<Mesh> createMeshImporter(
-    const std::filesystem::path& filePath,
-    oneapi::tbb::flow::graph& graph)
+function_node<std::filesystem::path, Mesh> createMeshImporter(
+    oneapi::tbb::flow::graph& graph,
+    std::size_t concurrency)
 {
-    struct ImporterInput {
-        ImporterInput(std::filesystem::path filePath) : filePath(filePath) {}
-        Mesh operator()(flow_control& fc)
-        {
-            if (called) {
-                fc.stop();
-                return Mesh();
-            } else {
-                called = true;
-                return importMesh(filePath);
-            }
-        };
-        bool called = false;
-        const std::filesystem::path filePath;
-    };
-
-    return input_node<Mesh>(graph, ImporterInput(filePath));
+    return function_node<std::filesystem::path, Mesh>(graph, concurrency, importMesh);
 }
 
 }  // namespace ModelMagick
