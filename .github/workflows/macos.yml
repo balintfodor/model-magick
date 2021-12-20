@@ -3,11 +3,9 @@ name: MacOS
 on:
   push:
     branches:
-      - master
       - main
   pull_request:
     branches:
-      - master
       - main
 
 env:
@@ -16,6 +14,9 @@ env:
 jobs:
   build:
     runs-on: macos-10.15
+    strategy:
+      matrix:
+        config: [Debug, Release]
 
     steps:
       - uses: actions/checkout@v2
@@ -25,7 +26,7 @@ jobs:
         run: conan install -if build .
 
       - name: configure
-        run: cmake . -Bbuild -DCMAKE_BUILD_TYPE=Debug
+        run: cmake . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.config }}
 
       - name: build
         run: cmake --build build -j4
@@ -33,4 +34,4 @@ jobs:
       - name: test
         run: |
           cd build
-          ctest --build-config Debug
+          ctest --build-config ${{ matrix.config }}
