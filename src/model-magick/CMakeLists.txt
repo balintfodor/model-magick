@@ -8,8 +8,10 @@ add_library(${LIB_TARGET_NAME}
     include/model-magick/Mesh.h
     include/model-magick/MeshImporter.h
     include/model-magick/MeshStatsCalculator.h
+    include/model-magick/GeneralizedWindingNumberCalculator.h
     MeshImporter.cpp
     MeshStatsCalculator.cpp
+    GeneralizedWindingNumberCalculator.cpp
 )
 
 set_target_properties(${LIB_TARGET_NAME}
