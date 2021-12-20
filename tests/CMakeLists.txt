@@ -5,7 +5,7 @@ set(TEST_TARGET_NAME "test-model-magick")
 add_executable(${TEST_TARGET_NAME}
     test_main.cpp
     test_importer.cpp
-    test_MeshStatCalculator.cpp
+    test_MeshStatsCalculator.cpp
 )
 
 set_target_properties(${TEST_TARGET_NAME}

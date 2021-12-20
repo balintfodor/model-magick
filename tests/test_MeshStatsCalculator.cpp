@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include <model-magick/MeshStatCalculator.h>
+#include <model-magick/MeshStatsCalculator.h>
 
 using namespace std;
 using namespace oneapi::tbb::flow;
@@ -25,7 +25,6 @@ TEST_CASE("Stats function and node can print mesh stats", "[stats]")
         result.push_back({mesh, 42, 10});
 
         return result;
-
     }();
 
     auto i = GENERATE(0, 1);
@@ -57,7 +56,7 @@ TEST_CASE("Stats function and node can print mesh stats", "[stats]")
 
         graph g;
         auto provider = input_node<Mesh>(g, MeshProvider(mesh));
-        auto calculator = createMeshStatCalculator(g);
+        auto calculator = createMeshStatsCalculator(g);
         auto consumer = function_node<MeshStats, int>(g, 1, [nVertices=nVertices, nFaces=nFaces](const MeshStats& meshStats) {
             CHECK(meshStats.numVertices == nVertices);
             CHECK(meshStats.numFaces == nFaces);

@@ -1,4 +1,4 @@
-#include "model-magick/MeshStatCalculator.h"
+#include "model-magick/MeshStatsCalculator.h"
 
 namespace ModelMagick
 {
@@ -12,7 +12,7 @@ MeshStats calculateMeshStats(const Mesh& mesh)
     return MeshStats{mesh.numVertices(), mesh.numFaces()};
 }
 
-function_node<Mesh, MeshStats> createMeshStatCalculator(graph& graph, size_t concurrency)
+function_node<Mesh, MeshStats> createMeshStatsCalculator(graph& graph, size_t concurrency)
 {
     return function_node<Mesh, MeshStats>(graph, concurrency, calculateMeshStats);
 }
