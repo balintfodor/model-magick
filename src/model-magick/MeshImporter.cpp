@@ -1,4 +1,4 @@
-#include "model-magick/importer.h"
+#include "model-magick/MeshImporter.h"
 
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -12,7 +12,7 @@ using namespace std::filesystem;
 using namespace oneapi::tbb;
 using namespace oneapi::tbb::flow;
 
-Mesh importModel(const path& filePath)
+Mesh importMesh(const path& filePath)
 {
     Assimp::Importer importer;
 
@@ -21,7 +21,7 @@ Mesh importModel(const path& filePath)
                                | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
 
     if (!scene) {
-        throw OpenError();
+        throw MeshOpenError();
     }
 
     // TODO: handle scene->mNumMeshes != 1
@@ -50,27 +50,11 @@ Mesh importModel(const path& filePath)
     return newMesh;
 }
 
-input_node<Mesh> createModelImporter(
-    const std::filesystem::path& filePath,
-    oneapi::tbb::flow::graph& graph)
+function_node<std::filesystem::path, Mesh> createMeshImporter(
+    oneapi::tbb::flow::graph& graph,
+    std::size_t concurrency)
 {
-    struct ImporterInput {
-        ImporterInput(std::filesystem::path filePath) : filePath(filePath) {}
-        Mesh operator()(flow_control& fc)
-        {
-            if (called) {
-                fc.stop();
-                return Mesh();
-            } else {
-                called = true;
-                return importModel(filePath);
-            }
-        };
-        bool called = false;
-        const std::filesystem::path filePath;
-    };
-
-    return input_node<Mesh>(graph, ImporterInput(filePath));
+    return function_node<std::filesystem::path, Mesh>(graph, concurrency, importMesh);
 }
 
 }  // namespace ModelMagick

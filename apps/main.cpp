@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <oneapi/tbb.h>
-#include <model-magick/importer.h>
+#include <model-magick/MeshImporter.h>
 
 using namespace std;
 using namespace oneapi::tbb::flow;
