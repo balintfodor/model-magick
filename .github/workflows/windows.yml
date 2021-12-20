@@ -3,11 +3,9 @@ name: Windows
 on:
   push:
     branches:
-      - master
       - main
   pull_request:
     branches:
-      - master
       - main
 
 env:
@@ -16,21 +14,24 @@ env:
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        config: [Debug, Release]
 
     steps:
       - uses: actions/checkout@v2
       - uses: turtlebrowser/get-conan@v1.0
 
       - name: install conan dependencies
-        run: conan install -if build -s build_type=Debug .
+        run: conan install -if build -s build_type=${{ matrix.config }} .
 
       - name: configure
         run: cmake . -Bbuild
 
       - name: build
-        run: cmake --build build --config Debug -j4
+        run: cmake --build build --config ${{ matrix.config }} -j4
 
       - name: test
         run: |
           cd build
-          ctest --build-config Debug
+          ctest --build-config ${{ matrix.config }}
