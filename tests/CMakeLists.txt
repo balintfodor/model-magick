@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 set(TEST_TARGET_NAME "test-model-magick")
 
 add_executable(${TEST_TARGET_NAME}
+    test_ConstProvider.cpp
     test_main.cpp
     test_MeshImporter.cpp
     test_MeshStatsCalculator.cpp
