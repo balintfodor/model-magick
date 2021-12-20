@@ -1,4 +1,4 @@
-#include "model-magick/importer.h"
+#include "model-magick/MeshImporter.h"
 
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -12,7 +12,7 @@ using namespace std::filesystem;
 using namespace oneapi::tbb;
 using namespace oneapi::tbb::flow;
 
-Mesh importModel(const path& filePath)
+Mesh importMesh(const path& filePath)
 {
     Assimp::Importer importer;
 
@@ -21,7 +21,7 @@ Mesh importModel(const path& filePath)
                                | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
 
     if (!scene) {
-        throw OpenError();
+        throw MeshOpenError();
     }
 
     // TODO: handle scene->mNumMeshes != 1
@@ -50,7 +50,7 @@ Mesh importModel(const path& filePath)
     return newMesh;
 }
 
-input_node<Mesh> createModelImporter(
+input_node<Mesh> createMeshImporter(
     const std::filesystem::path& filePath,
     oneapi::tbb::flow::graph& graph)
 {
@@ -63,7 +63,7 @@ input_node<Mesh> createModelImporter(
                 return Mesh();
             } else {
                 called = true;
-                return importModel(filePath);
+                return importMesh(filePath);
             }
         };
         bool called = false;

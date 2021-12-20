@@ -5,7 +5,7 @@
 
 #include <oneapi/tbb.h>
 
-#include "mesh.h"
+#include "Mesh.h"
 
 namespace ModelMagick
 {

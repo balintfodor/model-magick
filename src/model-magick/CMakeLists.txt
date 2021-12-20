@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 set(LIB_TARGET_NAME model-magick)
 
 add_library(${LIB_TARGET_NAME}
-    include/model-magick/mesh.h
-    include/model-magick/importer.h
+    include/model-magick/Mesh.h
+    include/model-magick/MeshImporter.h
     include/model-magick/MeshStatsCalculator.h
-    importer.cpp
+    MeshImporter.cpp
     MeshStatsCalculator.cpp
 )
 
