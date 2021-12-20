@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include <model-magick/importer.h>
+#include <model-magick/MeshImporter.h>
 
 using namespace std;
 using namespace oneapi::tbb::flow;
@@ -18,7 +18,7 @@ TEST_CASE("Import can load files", "[importer]")
     auto [filename, nVertices, nFaces] = samples[i];
 
     SECTION("import function") {
-        Mesh mesh = importModel(filename);
+        Mesh mesh = importMesh(filename);
         CHECK(mesh.numVertices() == nVertices);
         CHECK(mesh.numFaces() == nFaces);
     }
@@ -26,7 +26,7 @@ TEST_CASE("Import can load files", "[importer]")
     SECTION("import node with fixed filename") {
 
         graph g;
-        auto importer = createModelImporter(filename, g);
+        auto importer = createMeshImporter(filename, g);
         auto consumer = function_node<Mesh, int>(g, 1, [nVertices=nVertices, nFaces=nFaces](const Mesh& mesh) {
             CHECK(mesh.numVertices() == nVertices);
             CHECK(mesh.numFaces() == nFaces);
@@ -43,13 +43,13 @@ TEST_CASE("Import can load files", "[importer]")
 TEST_CASE("Import can throw if the file does not exist", "[importer]")
 {
     SECTION("import function") {
-        REQUIRE_THROWS_AS(importModel("NOT-EXISTING-FILE.stl"), OpenError);
+        REQUIRE_THROWS_AS(importMesh("NOT-EXISTING-FILE.stl"), MeshOpenError);
     }
 
     SECTION("import node with fixed filename") {
 
         graph g;
-        auto importer = createModelImporter("NOT-EXISTING-FILE.stl", g);
+        auto importer = createMeshImporter("NOT-EXISTING-FILE.stl", g);
         auto consumer = function_node<Mesh, int>(g, 1, [](const Mesh&) {
             return 0;
         });
@@ -57,6 +57,6 @@ TEST_CASE("Import can throw if the file does not exist", "[importer]")
         make_edge(importer, consumer);
 
         importer.activate();
-        REQUIRE_THROWS_AS(g.wait_for_all(), OpenError);
+        REQUIRE_THROWS_AS(g.wait_for_all(), MeshOpenError);
     }
 }
