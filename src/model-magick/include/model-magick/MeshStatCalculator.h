@@ -18,7 +18,6 @@ struct MeshStats {
 MeshStats calculateMeshStats(const Mesh& mesh);
 
 oneapi::tbb::flow::function_node<Mesh, MeshStats> createMeshStatCalculator(
-    const Mesh& mesh,
     oneapi::tbb::flow::graph& graph,
     std::size_t concurrency = oneapi::tbb::flow::unlimited);
 

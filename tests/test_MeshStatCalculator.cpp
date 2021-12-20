@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include <model-magick/stats.h>
+#include <model-magick/MeshStatCalculator.h>
 
 using namespace std;
 using namespace oneapi::tbb::flow;
@@ -12,22 +12,55 @@ using namespace ModelMagick;
 
 TEST_CASE("Stats function and node can print mesh stats", "[stats]")
 {
-    Mesh mesh;
+    const vector<tuple<Mesh, int, int>> meshes = []() {
+        vector<tuple<Mesh, int, int>> result;
+
+        Mesh emptyMesh;
+        Mesh mesh;
+
+        mesh.vertices.resize(42, 3);
+        mesh.indices.resize(10, 3);
+
+        result.push_back({emptyMesh, 0, 0});
+        result.push_back({mesh, 42, 10});
+
+        return result;
+
+    }();
+
+    auto i = GENERATE(0, 1);
+    const auto [mesh, nVertices, nFaces] = meshes[i];
 
     SECTION("stats function") {
-        MeshStats stats = calculateMeshStats(filename);
-        CHECK(stats.numVertices() == 0);
-        CHECK(stats.numFaces() == 0);
+        MeshStats stats = calculateMeshStats(mesh);
+        CHECK(stats.numVertices == nVertices);
+        CHECK(stats.numFaces == nFaces);
     }
+
+    struct MeshProvider {
+        MeshProvider(Mesh mesh) : mesh(mesh) {}
+        Mesh operator()(tbb::flow_control& fc)
+        {
+            if (called) {
+                fc.stop();
+                return Mesh();
+            } else {
+                called = true;
+                return mesh;
+            }
+        };
+        bool called = false;
+        const Mesh mesh;
+    };
 
     SECTION("stats node") {
 
         graph g;
-        auto provider = createProvider<Mesh>(mesh);
+        auto provider = input_node<Mesh>(g, MeshProvider(mesh));
         auto calculator = createMeshStatCalculator(g);
-        auto consumer = function_node<Mesh, int>(g, 1, [](const MeshStats& meshStats) {
-            CHECK(meshStats.numVertices == 0);
-            CHECK(meshStats.numFaces == 0);
+        auto consumer = function_node<MeshStats, int>(g, 1, [nVertices=nVertices, nFaces=nFaces](const MeshStats& meshStats) {
+            CHECK(meshStats.numVertices == nVertices);
+            CHECK(meshStats.numFaces == nFaces);
             return 0;
         });
 
