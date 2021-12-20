@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include <model-magick/ConstProvider.h>
+#include <model-magick/Consumer.h>
 #include <model-magick/MeshStatsCalculator.h>
 
 using namespace std;
@@ -36,37 +38,22 @@ TEST_CASE("Stats function and node can print mesh stats", "[stats]")
         CHECK(stats.numFaces == nFaces);
     }
 
-    struct MeshProvider {
-        MeshProvider(Mesh mesh) : mesh(mesh) {}
-        Mesh operator()(tbb::flow_control& fc)
-        {
-            if (called) {
-                fc.stop();
-                return Mesh();
-            } else {
-                called = true;
-                return mesh;
-            }
-        };
-        bool called = false;
-        const Mesh mesh;
-    };
-
     SECTION("stats node") {
 
         graph g;
-        auto provider = input_node<Mesh>(g, MeshProvider(mesh));
+        auto provider = createConstProvider<Mesh>(g, mesh);
         auto calculator = createMeshStatsCalculator(g);
-        auto consumer = function_node<MeshStats, int>(g, 1, [nVertices=nVertices, nFaces=nFaces](const MeshStats& meshStats) {
-            CHECK(meshStats.numVertices == nVertices);
-            CHECK(meshStats.numFaces == nFaces);
-            return 0;
-        });
+        auto consumer = createConsumer<MeshStats>(g);
 
         make_edge(provider, calculator);
         make_edge(calculator, consumer);
 
         provider.activate();
-        REQUIRE_NOTHROW(g.wait_for_all());
+        g.wait_for_all();
+
+        MeshStats resultStats;
+        CHECK(consumer.try_get(resultStats));
+        CHECK(resultStats.numVertices == nVertices);
+        CHECK(resultStats.numFaces == nFaces);
     }
 }
