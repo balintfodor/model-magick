@@ -110,7 +110,8 @@ TEST_CASE("Solid angles can be calculated", "[generalized-winding-number]")
     auto i = GENERATE_COPY(range(0, numTests));
     const auto [mesh, expectedResult] = testSamples[i];
 
-    const auto result = calculateSolidAnglesForPlanarTriangles(mesh);
+    // TODO: test with different query point
+    const auto result = calculateSolidAnglesForPlanarTriangles(mesh, {0, 0, 0});
     CAPTURE(result, expectedResult);
     CHECK(result.isApprox(expectedResult));
 }

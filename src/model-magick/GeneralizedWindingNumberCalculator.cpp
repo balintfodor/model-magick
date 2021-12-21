@@ -43,7 +43,9 @@ Eigen::MatrixX3f calculateTriangleNormals(const Mesh& mesh)
     return triangleNormals;
 }
 
-Eigen::VectorXf calculateSolidAnglesForPlanarTriangles(const Mesh& mesh)
+Eigen::VectorXf calculateSolidAnglesForPlanarTriangles(
+    const Mesh& mesh,
+    const Eigen::RowVector3f& queryPoint)
 {
     // https://igl.ethz.ch/projects/winding-number/robust-inside-outside-segmentation-using-generalized-winding-numbers-siggraph-2013-jacobson-et-al.pdf
     // Eq. 6.
@@ -52,13 +54,15 @@ Eigen::VectorXf calculateSolidAnglesForPlanarTriangles(const Mesh& mesh)
     const int m = mesh.numFaces();
     solidAngles.resize(m);
     parallel_for(
-        blocked_range<size_t>(0, m), [&solidAngles, &mesh](const blocked_range<size_t>& r) {
+        blocked_range<size_t>(0, m),
+        [&solidAngles, &mesh, &queryPoint](const blocked_range<size_t>& r) {
             for (size_t i = r.begin(); i != r.end(); ++i) {
                 // triangle points in 3x3 matrix
                 //       [a1, a2, a3]
                 // abc = [b1, b2, b3]
                 //       [c1, c2, c3]
-                const Eigen::Matrix3f abc = mesh.vertices(mesh.indices(i, Eigen::all), Eigen::all);
+                const Eigen::Matrix3f abc
+                    = mesh.vertices(mesh.indices(i, Eigen::all), Eigen::all).rowwise() - queryPoint;
                 // row norms in column vector
                 const Eigen::Vector3f normAbc = abc.rowwise().norm();
                 const float d0 = normAbc.prod();
@@ -71,17 +75,23 @@ Eigen::VectorXf calculateSolidAnglesForPlanarTriangles(const Mesh& mesh)
     return solidAngles;
 }
 
-Eigen::VectorXf calculateGeneralizedWindingNumber(const Eigen::MatrixX3f&, const Mesh& mesh)
+Eigen::VectorXf calculateGeneralizedWindingNumber(
+    const Mesh& mesh,
+    const Eigen::MatrixX3f& queryPoints)
 {
-    Eigen::MatrixX3f triangleCenters = calculateTriangleCenters(mesh);
-    Eigen::MatrixX3f triangleNormals = calculateTriangleNormals(mesh);
-
-    // one point p
-    // winding_sum = 0
-    // for all triangle with center c and normal n
-    //   winding_sum += normalize(c - p).dot(n)
-    // winding_sum /= 4*pi
-    return Eigen::VectorXf();
+    Eigen::VectorXf windingNumbers;
+    const int numQuery = queryPoints.rows();
+    windingNumbers.resize(numQuery);
+    parallel_for(
+        blocked_range<size_t>(0, numQuery),
+        [&windingNumbers, &mesh, &queryPoints](const blocked_range<size_t>& r) {
+            for (size_t i = r.begin(); i != r.end(); ++i) {
+                windingNumbers(i)
+                    = 0.25 * M_1_PI
+                      * calculateSolidAnglesForPlanarTriangles(mesh, queryPoints.row(i)).sum();
+            }
+        });
+    return windingNumbers;
 }
 
 // oneapi::tbb::flow::function_node<Mesh, Eigen::MatrixX3f, Eigen::VectorXf>

@@ -10,15 +10,20 @@
 namespace ModelMagick
 {
 
-Eigen::VectorXf calculateGeneralizedWindingNumber(const Eigen::MatrixX3f& samplers, const Mesh& mesh);
+Eigen::VectorXf calculateGeneralizedWindingNumber(
+    const Mesh& mesh,
+    const Eigen::MatrixX3f& queryPoints);
 
 Eigen::MatrixX3f calculateTriangleCenters(const Mesh& mesh);
 
 Eigen::MatrixX3f calculateTriangleNormals(const Mesh& mesh);
 
-Eigen::VectorXf calculateSolidAnglesForPlanarTriangles(const Mesh& mesh);
+Eigen::VectorXf calculateSolidAnglesForPlanarTriangles(
+    const Mesh& mesh,
+    const Eigen::RowVector3f& queryPoint);
 
-oneapi::tbb::flow::function_node<Mesh, Eigen::MatrixX3f, Eigen::VectorXf> createGeneralizedWindingNumberCalculator(
+oneapi::tbb::flow::function_node<Mesh, Eigen::MatrixX3f, Eigen::VectorXf>
+createGeneralizedWindingNumberCalculator(
     oneapi::tbb::flow::graph& graph,
     std::size_t concurrency = oneapi::tbb::flow::unlimited);
 
