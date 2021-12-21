@@ -8,8 +8,10 @@ add_library(${LIB_TARGET_NAME}
     include/model-magick/Mesh.h
     include/model-magick/MeshImporter.h
     include/model-magick/MeshStatsCalculator.h
+    include/model-magick/GeneralizedWindingNumberCalculator.h
     MeshImporter.cpp
     MeshStatsCalculator.cpp
+    GeneralizedWindingNumberCalculator.cpp
 )
 
 set_target_properties(${LIB_TARGET_NAME}
@@ -18,6 +20,8 @@ set_target_properties(${LIB_TARGET_NAME}
 
 if(MSVC)
     target_compile_definitions(${LIB_TARGET_NAME}
+        PUBLIC
+            -D_USE_MATH_DEFINES
         PRIVATE
             # assimp can cause compilation error if this is not set
             -DNOMINMAX
