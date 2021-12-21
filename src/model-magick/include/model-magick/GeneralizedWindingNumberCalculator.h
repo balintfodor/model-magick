@@ -14,10 +14,6 @@ Eigen::VectorXf calculateGeneralizedWindingNumber(
     const Mesh& mesh,
     const Eigen::MatrixX3f& queryPoints);
 
-Eigen::MatrixX3f calculateTriangleCenters(const Mesh& mesh);
-
-Eigen::MatrixX3f calculateTriangleNormals(const Mesh& mesh);
-
 Eigen::VectorXf calculateSolidAnglesForPlanarTriangles(
     const Mesh& mesh,
     const Eigen::RowVector3f& queryPoint);

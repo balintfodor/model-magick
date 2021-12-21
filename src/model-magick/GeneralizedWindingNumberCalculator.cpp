@@ -9,40 +9,6 @@ using namespace std;
 using namespace oneapi::tbb;
 using namespace oneapi::tbb::flow;
 
-Eigen::MatrixX3f calculateTriangleCenters(const Mesh& mesh)
-{
-    Eigen::MatrixX3f triangleCenters;
-    const int m = mesh.numFaces();
-    triangleCenters.resize(m, 3);
-    parallel_for(
-        blocked_range<size_t>(0, m), [&triangleCenters, &mesh](const blocked_range<size_t>& r) {
-            for (size_t i = r.begin(); i != r.end(); ++i) {
-                triangleCenters.row(i)
-                    = mesh.vertices(mesh.indices.row(i), Eigen::all).colwise().mean();
-            }
-        });
-    return triangleCenters;
-}
-
-Eigen::MatrixX3f calculateTriangleNormals(const Mesh& mesh)
-{
-    // TODO: make sure to remove all 0 area triangles before this
-
-    Eigen::MatrixX3f triangleNormals;
-    const int m = mesh.numFaces();
-    triangleNormals.resize(m, 3);
-    parallel_for(
-        blocked_range<size_t>(0, m), [&triangleNormals, &mesh](const blocked_range<size_t>& r) {
-            for (size_t i = r.begin(); i != r.end(); ++i) {
-                const Eigen::RowVector3f a = mesh.vertices(mesh.indices(i, 0), Eigen::all);
-                const Eigen::RowVector3f b = mesh.vertices(mesh.indices(i, 1), Eigen::all);
-                const Eigen::RowVector3f c = mesh.vertices(mesh.indices(i, 2), Eigen::all);
-                triangleNormals.row(i) = (b - a).cross(c - a);
-            }
-        });
-    return triangleNormals;
-}
-
 Eigen::VectorXf calculateSolidAnglesForPlanarTriangles(
     const Mesh& mesh,
     const Eigen::RowVector3f& queryPoint)
@@ -81,7 +47,7 @@ Eigen::VectorXf calculateGeneralizedWindingNumber(
 {
     Eigen::VectorXf windingNumbers;
     const int numQuery = queryPoints.rows();
-    windingNumbers.resize(numQuery);
+    windingNumbers.resize(numQuery, 1);
     parallel_for(
         blocked_range<size_t>(0, numQuery),
         [&windingNumbers, &mesh, &queryPoints](const blocked_range<size_t>& r) {
