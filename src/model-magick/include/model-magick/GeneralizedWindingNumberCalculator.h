@@ -14,6 +14,10 @@ Eigen::VectorXf calculateGeneralizedWindingNumber(const Eigen::MatrixX3f& sample
 
 Eigen::MatrixX3f calculateTriangleCenters(const Mesh& mesh);
 
+Eigen::MatrixX3f calculateTriangleNormals(const Mesh& mesh);
+
+Eigen::VectorXf calculateSolidAnglesForPlanarTriangles(const Mesh& mesh);
+
 oneapi::tbb::flow::function_node<Mesh, Eigen::MatrixX3f, Eigen::VectorXf> createGeneralizedWindingNumberCalculator(
     oneapi::tbb::flow::graph& graph,
     std::size_t concurrency = oneapi::tbb::flow::unlimited);
