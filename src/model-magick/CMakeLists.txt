@@ -20,6 +20,8 @@ set_target_properties(${LIB_TARGET_NAME}
 
 if(MSVC)
     target_compile_definitions(${LIB_TARGET_NAME}
+        PUBLIC
+            -D_USE_MATH_DEFINES
         PRIVATE
             # assimp can cause compilation error if this is not set
             -DNOMINMAX

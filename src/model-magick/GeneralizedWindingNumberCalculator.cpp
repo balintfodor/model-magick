@@ -1,5 +1,7 @@
 #include "model-magick/MeshStatsCalculator.h"
 
+#include <cmath>
+
 #include <Eigen/Geometry>
 
 namespace ModelMagick
