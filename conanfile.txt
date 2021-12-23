@@ -4,6 +4,7 @@ onetbb/2021.3.0
 libigl/2.3.0
 assimp/5.1.0
 eigen/3.4.0
+lodepng/cci.20200615
 
 [generators]
 cmake

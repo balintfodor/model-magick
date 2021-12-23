@@ -5,13 +5,16 @@ set(LIB_TARGET_NAME model-magick)
 add_library(${LIB_TARGET_NAME}
     include/model-magick/ConstProvider.h
     include/model-magick/Consumer.h
+    include/model-magick/GeneralizedWindingNumberCalculator.h
+    include/model-magick/Image.h
+    include/model-magick/ImageWriter.h
     include/model-magick/Mesh.h
     include/model-magick/MeshImporter.h
     include/model-magick/MeshStatsCalculator.h
-    include/model-magick/GeneralizedWindingNumberCalculator.h
+    GeneralizedWindingNumberCalculator.cpp
+    ImageWriter.cpp
     MeshImporter.cpp
     MeshStatsCalculator.cpp
-    GeneralizedWindingNumberCalculator.cpp
 )
 
 set_target_properties(${LIB_TARGET_NAME}
@@ -46,7 +49,7 @@ target_link_libraries(${LIB_TARGET_NAME}
         CONAN_PKG::eigen
         CONAN_PKG::onetbb
     PRIVATE
-        CONAN_PKG::libigl
+        CONAN_PKG::lodepng
         CONAN_PKG::assimp
 )
 
